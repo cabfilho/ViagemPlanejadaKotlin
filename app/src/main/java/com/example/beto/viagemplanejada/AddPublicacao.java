@@ -21,6 +21,7 @@ public class AddPublicacao extends AppCompatActivity {
     public void savePublicacao(View view){
         EditText dtViagem = findViewById(R.id.txtDtViagem);
 
+        
 
 
         DatabaseReference databaseRef = firebaseDatabase.getReference();
