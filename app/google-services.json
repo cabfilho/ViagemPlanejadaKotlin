@@ -1,65 +1,21 @@
 {
   "project_info": {
-    "project_number": "277074746790",
-    "firebase_url": "https://viagemplanejada-531a7.firebaseio.com",
-    "project_id": "viagemplanejada-531a7",
-    "storage_bucket": "viagemplanejada-531a7.appspot.com"
+    "project_number": "88693759307",
+    "firebase_url": "https://viageplanejadadb.firebaseio.com",
+    "project_id": "viageplanejadadb",
+    "storage_bucket": "viageplanejadadb.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:277074746790:android:c1b99b51d064acfb",
-        "android_client_info": {
-          "package_name": "br.com.viagemplanejada.viagemplanejada"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "277074746790-9oq2sh4mbp811j4chgd3rltusnqhldhr.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "br.com.viagemplanejada.viagemplanejada",
-            "certificate_hash": "2256ae9ff6638995466321aa7f8f65f9bace80bb"
-          }
-        },
-        {
-          "client_id": "277074746790-h8bd51odo4alpooa4lseu277ophdc3nq.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDQnz_K7dAmbFHaKi6hblDs-JbQ1L8dzMY"
-        }
-      ],
-      "services": {
-        "analytics_service": {
-          "status": 1
-        },
-        "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "277074746790-h8bd51odo4alpooa4lseu277ophdc3nq.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        },
-        "ads_service": {
-          "status": 2
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:277074746790:android:b98db182292336ff",
+        "mobilesdk_app_id": "1:88693759307:android:b98db182292336ff",
         "android_client_info": {
           "package_name": "com.example.beto.viagemplanejada"
         }
       },
       "oauth_client": [
         {
-          "client_id": "277074746790-d6mav97c45kcb6o3g54sttkm8rtv47vn.apps.googleusercontent.com",
+          "client_id": "88693759307-4ejvjbha5u41sjn8veu7fo2h30r35dvh.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.beto.viagemplanejada",
@@ -67,13 +23,13 @@
           }
         },
         {
-          "client_id": "277074746790-h8bd51odo4alpooa4lseu277ophdc3nq.apps.googleusercontent.com",
+          "client_id": "88693759307-an1a7mu69j4mc66145k5bjf3av4vh1fc.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDQnz_K7dAmbFHaKi6hblDs-JbQ1L8dzMY"
+          "current_key": "AIzaSyCdGfhcF3Vp1JAxCXzcfqmRu1Wgp_XMIBk"
         }
       ],
       "services": {
@@ -84,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "277074746790-h8bd51odo4alpooa4lseu277ophdc3nq.apps.googleusercontent.com",
+              "client_id": "88693759307-an1a7mu69j4mc66145k5bjf3av4vh1fc.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

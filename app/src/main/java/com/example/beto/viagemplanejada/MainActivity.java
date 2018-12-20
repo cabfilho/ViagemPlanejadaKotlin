@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
-    private RecyclerView viagemRecyclerView;
+    RecyclerView viagemRecyclerView;
     DatabaseReference databaseRef;
     ChildEventListener listener;
 
@@ -37,8 +37,9 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseRef = firebaseDatabase.getReference("Pulbicacap");
+        databaseRef = firebaseDatabase.getReference("Publicacao");
         ViagemAdapter adapter = new ViagemAdapter(new ArrayList<DataSnapshot>());
+        viagemRecyclerView.setAdapter(adapter);
         RecyclerView.LayoutManager lm = new LinearLayoutManager(getApplicationContext());
         viagemRecyclerView.setLayoutManager(lm);
 

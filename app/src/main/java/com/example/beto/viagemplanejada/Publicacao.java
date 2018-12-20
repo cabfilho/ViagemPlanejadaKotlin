@@ -7,10 +7,25 @@ public class Publicacao {
     private String cidade;
     private Date dtViagem;
     private Date dtPublicacao;
+    private float rating;
 
-    public Publicacao(String pais, Date dtViagem) {
+    public Publicacao(){}
+
+
+    public Publicacao(String pais, String cidade, Date dtViagem, Date dtPublicacao, float rating) {
         this.pais = pais;
+        this.cidade = cidade;
         this.dtViagem = dtViagem;
+        this.dtPublicacao = dtPublicacao;
+        this.rating = rating;
+    }
+
+    public String getPais() {
+        return pais;
+    }
+
+    public void setPais(String pais) {
+        this.pais = pais;
     }
 
     public String getCidade() {
@@ -37,12 +52,11 @@ public class Publicacao {
         this.dtPublicacao = dtPublicacao;
     }
 
-    public String getPais() {
-
-        return pais;
+    public float getRating() {
+        return rating;
     }
 
-    public void setPais(String pais) {
-        this.pais = pais;
+    public void setRating(float rating) {
+        this.rating = rating;
     }
 }
