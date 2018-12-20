@@ -10,6 +10,8 @@ import android.widget.RatingBar;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,23 +58,32 @@ public class AddPublicacao extends AppCompatActivity {
         EditText pais = findViewById(R.id.editPais);
         RatingBar ratingBar =findViewById(R.id.ratingBar);
         ratingBar.getRating();
+        Boolean bTemErro = false;
+        if(StringUtils.isBlank(pais.getText().toString())) {
+            pais.setError("País é um campo obrigatório");
+            bTemErro = true;
+        }
+        if(StringUtils.isBlank(dtViagem.getText().toString())) {
+            dtViagem.setError("Data da viagem é um campo obrigatório");
+            bTemErro = true;
+        }
+        if(!bTemErro) {
+            Date dtConvert = new Date();
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            dtConvert = dateFormat.parse(dtViagem.getText().toString());
 
-        Date dtConvert = new Date();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        dtConvert = dateFormat.parse(dtViagem.getText().toString());
+            DatabaseReference databaseRef = firebaseDatabase.getReference();
 
-        DatabaseReference databaseRef = firebaseDatabase.getReference();
-
-        Publicacao publicacao = new Publicacao(pais.getText().toString(),
-               cidade.getText().toString(),
-                dtConvert,
-                new Date(),ratingBar.getRating());
+            Publicacao publicacao = new Publicacao(pais.getText().toString(),
+                    cidade.getText().toString(),
+                    dtConvert,
+                    new Date(), ratingBar.getRating());
 
 
-        databaseRef.child("Publicacao").push().setValue(publicacao);
+            databaseRef.child("Publicacao").push().setValue(publicacao);
 
 
-        finish();
-
+            finish();
+        }
     }
 }

@@ -13,6 +13,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class ViagemAdapter extends RecyclerView.Adapter {
@@ -39,7 +42,11 @@ public class ViagemAdapter extends RecyclerView.Adapter {
         ViagemViewHolder viagemViewHolder = (ViagemViewHolder) holder;
 
         viagemViewHolder.paisTextView.setText(publicacao.getPais());
-        viagemViewHolder.dtTextView.setText(publicacao.getDtViagem().toString());
+
+        Date dtConvert = publicacao.getDtViagem();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        viagemViewHolder.dtTextView.setText(dateFormat.format(dtConvert));
 
     }
 
@@ -86,7 +93,7 @@ public class ViagemAdapter extends RecyclerView.Adapter {
         public ViagemViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            paisTextView = itemView.findViewById(R.id.txtPais);
+            paisTextView = itemView.findViewById(R.id.lblPais);
             dtTextView = itemView.findViewById(R.id.txtDtViagem);
             deleteButton = itemView.findViewById(R.id.imgDeleteBtn);
 
