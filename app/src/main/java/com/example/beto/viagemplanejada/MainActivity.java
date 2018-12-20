@@ -2,6 +2,8 @@ package com.example.beto.viagemplanejada;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -51,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
                         DividerItemDecoration.VERTICAL));
 
         progressBar.setVisibility(View.VISIBLE);
+        Context context = this;
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+//        if ( cm != null ) {
+//            NetworkInfo ni = cm.getActiveNetworkInfo();
+//
+//            return ni != null && ni.isConnected();
+//        }
 
         databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

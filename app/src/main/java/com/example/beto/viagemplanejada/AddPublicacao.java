@@ -29,22 +29,31 @@ import retrofit2.Response;
 
 public class AddPublicacao extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
-    List<Pais> paises = new ArrayList<>();
+
     EditText dtViagem ;
     EditText cidade;
     EditText pais;
     RatingBar ratingBar;
+    String id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_publicacao);
         firebaseDatabase = FirebaseDatabase.getInstance();
+        Call<List<Pais>> call;
+        id = "";
         dtViagem = findViewById(R.id.editDtViagem);
         cidade = findViewById(R.id.editCidade);
         pais = findViewById(R.id.editPais);
         ratingBar =findViewById(R.id.ratingBar);
+
         Bundle extras = getIntent().getExtras();
-        String id = (String) extras.get("id");
+
+        if(extras != null){
+             id = (String) extras.get("id");
+        }
+
         if(StringUtils.isNotBlank(id)) {
             DatabaseReference databaseRef = firebaseDatabase.getReference().child("Publicacao").child(id);
             databaseRef.addValueEventListener(new ValueEventListener() {
@@ -68,12 +77,12 @@ public class AddPublicacao extends AppCompatActivity {
 
         }
         try {
-            Call<List<Pais>> call = new RetrofitConfig().getPaisService().buscarPais();
+            call = new RetrofitConfig().getPaisService().buscarPais();
             call.enqueue(new Callback<List<Pais>>() {
                 @Override
                 public void onResponse(Call<List<Pais>> call, Response<List<Pais>> response) {
 
-                     response.body();
+                   List<Pais> paises = response.body();
 
                 }
 
@@ -100,6 +109,10 @@ public class AddPublicacao extends AppCompatActivity {
             dtViagem.setError("Data da viagem é um campo obrigatório");
             bTemErro = true;
         }
+        if(StringUtils.isBlank(cidade.getText().toString())) {
+            cidade.setError("Cidade da viagem é um campo obrigatório");
+            bTemErro = true;
+        }
         if(!bTemErro) {
             Date dtConvert = new Date();
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -112,10 +125,12 @@ public class AddPublicacao extends AppCompatActivity {
                     dtConvert,
                     new Date(), ratingBar.getRating());
 
+            if(StringUtils.isBlank(id)){
+                databaseRef.child("Publicacao").push().setValue(publicacao);
 
-            databaseRef.child("Publicacao").push().setValue(publicacao);
-
-
+            }else{
+                databaseRef.child("Publicacao").child(id).setValue(publicacao);
+            }
             finish();
         }
     }
