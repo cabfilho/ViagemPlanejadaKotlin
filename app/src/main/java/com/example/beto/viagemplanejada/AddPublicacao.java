@@ -1,5 +1,6 @@
 package com.example.beto.viagemplanejada;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,8 +8,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RatingBar;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,12 +29,44 @@ import retrofit2.Response;
 
 public class AddPublicacao extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
-    List<Pais> pais = new ArrayList<>();
+    List<Pais> paises = new ArrayList<>();
+    EditText dtViagem ;
+    EditText cidade;
+    EditText pais;
+    RatingBar ratingBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_publicacao);
         firebaseDatabase = FirebaseDatabase.getInstance();
+        dtViagem = findViewById(R.id.editDtViagem);
+        cidade = findViewById(R.id.editCidade);
+        pais = findViewById(R.id.editPais);
+        ratingBar =findViewById(R.id.ratingBar);
+        Bundle extras = getIntent().getExtras();
+        String id = (String) extras.get("id");
+        if(StringUtils.isNotBlank(id)) {
+            DatabaseReference databaseRef = firebaseDatabase.getReference().child("Publicacao").child(id);
+            databaseRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        Publicacao publicacao = dataSnapshot.getValue(Publicacao.class);
+                        pais.setText(publicacao.getPais());
+                        cidade.setText(publicacao.getCidade());
+                        dtViagem.setText(publicacao.getDtViagem().toString());
+                        ratingBar.setRating(publicacao.getRating());
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
         try {
             Call<List<Pais>> call = new RetrofitConfig().getPaisService().buscarPais();
             call.enqueue(new Callback<List<Pais>>() {
@@ -53,10 +89,7 @@ public class AddPublicacao extends AppCompatActivity {
     }
 
     public void savePublicacao(View view) throws ParseException {
-        EditText dtViagem = findViewById(R.id.editDtViagem);
-        EditText cidade = findViewById(R.id.editCidade);
-        EditText pais = findViewById(R.id.editPais);
-        RatingBar ratingBar =findViewById(R.id.ratingBar);
+
         ratingBar.getRating();
         Boolean bTemErro = false;
         if(StringUtils.isBlank(pais.getText().toString())) {

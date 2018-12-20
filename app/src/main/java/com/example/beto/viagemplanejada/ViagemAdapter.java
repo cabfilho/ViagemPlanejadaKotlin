@@ -1,5 +1,7 @@
 package com.example.beto.viagemplanejada;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -21,6 +23,7 @@ import java.util.List;
 public class ViagemAdapter extends RecyclerView.Adapter {
 
     List<DataSnapshot> items;
+    private Context context;
 
     public ViagemAdapter(List<DataSnapshot> viagens) {
         items = viagens;
@@ -32,11 +35,13 @@ public class ViagemAdapter extends RecyclerView.Adapter {
 
         View itemView = LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.view_holder_layout, parent, false);
+        context = parent.getContext();
         return new ViagemViewHolder(itemView);
     }
 
+
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         Publicacao publicacao = items.get(position).getValue(Publicacao.class);
 
         ViagemViewHolder viagemViewHolder = (ViagemViewHolder) holder;
@@ -47,6 +52,19 @@ public class ViagemAdapter extends RecyclerView.Adapter {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
         viagemViewHolder.dtTextView.setText(dateFormat.format(dtConvert));
+        viagemViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String id = items.get(position).getKey();
+                Intent intent = new Intent(context, AddPublicacao.class);
+                intent.putExtra("id",id);
+                context.startActivity(intent);
+            }
+        });
+
+
+
 
     }
 
@@ -83,7 +101,11 @@ public class ViagemAdapter extends RecyclerView.Adapter {
         }
     }
 
+    public String recuperaId(int index){
 
+        String id = items.get(index).getKey();
+        return id;
+    }
     public class ViagemViewHolder extends RecyclerView.ViewHolder{
 
         public TextView paisTextView;
@@ -96,6 +118,7 @@ public class ViagemAdapter extends RecyclerView.Adapter {
             paisTextView = itemView.findViewById(R.id.lblPais);
             dtTextView = itemView.findViewById(R.id.txtDtViagem);
             deleteButton = itemView.findViewById(R.id.imgDeleteBtn);
+
 
 
             deleteButton.setOnClickListener(new View.OnClickListener() {

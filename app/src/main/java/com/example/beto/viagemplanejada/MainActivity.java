@@ -1,5 +1,6 @@
 package com.example.beto.viagemplanejada;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference databaseRef;
     ChildEventListener listener;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         databaseRef = firebaseDatabase.getReference("Publicacao");
-        ViagemAdapter adapter = new ViagemAdapter(new ArrayList<DataSnapshot>());
+        final ViagemAdapter adapter = new ViagemAdapter(new ArrayList<DataSnapshot>());
         viagemRecyclerView.setAdapter(adapter);
         RecyclerView.LayoutManager lm = new LinearLayoutManager(getApplicationContext());
         viagemRecyclerView.setLayoutManager(lm);
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
                         DividerItemDecoration.VERTICAL));
 
         progressBar.setVisibility(View.VISIBLE);
+
         databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
