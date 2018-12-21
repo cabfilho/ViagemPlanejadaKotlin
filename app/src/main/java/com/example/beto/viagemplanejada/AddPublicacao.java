@@ -1,6 +1,7 @@
 package com.example.beto.viagemplanejada;
 
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,9 +36,9 @@ import retrofit2.Response;
 public class AddPublicacao extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     FirebaseDatabase firebaseDatabase;
 
-    EditText dtViagem ;
-    EditText cidade;
-    EditText pais;
+    private EditText dtViagem ;
+    private  EditText cidade;
+
     RatingBar ratingBar;
     Spinner spinner;
     String id;
@@ -45,6 +46,7 @@ public class AddPublicacao extends AppCompatActivity implements AdapterView.OnIt
     String paisSelected;
     Publicacao publicacao = new Publicacao();
     List<String> paisesTraduzidos = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -55,7 +57,7 @@ public class AddPublicacao extends AppCompatActivity implements AdapterView.OnIt
         id = "";
         dtViagem = findViewById(R.id.editDtViagem);
         cidade = findViewById(R.id.editCidade);
-        pais = findViewById(R.id.editPais);
+        dtViagem.addTextChangedListener(MaskEditUtil.mask(dtViagem, MaskEditUtil.FORMAT_DATE));
         ratingBar =findViewById(R.id.ratingBar);
 
 
@@ -75,9 +77,12 @@ public class AddPublicacao extends AppCompatActivity implements AdapterView.OnIt
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         publicacao = dataSnapshot.getValue(Publicacao.class);
-                        pais.setText(publicacao.getPais());
+
                         cidade.setText(publicacao.getCidade());
-                        dtViagem.setText(publicacao.getDtViagem().toString());
+                        String dtConvert;
+                        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                        dtConvert = dateFormat.format(publicacao.getDtViagem());
+                        dtViagem.setText(dtConvert);
                         ratingBar.setRating(publicacao.getRating());
 
                     }
@@ -114,10 +119,10 @@ public class AddPublicacao extends AppCompatActivity implements AdapterView.OnIt
                             paisesTraduzidos);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinner.setOnItemSelectedListener(AddPublicacao.this);
-                    adapter.getAutofillOptions("teste");
+                    int spinnerPostion = adapter.getPosition(publicacao.getPais());
 
                     spinner.setAdapter(adapter);
-
+                    spinner.setSelection(spinnerPostion);
 
 
                 }
@@ -143,10 +148,7 @@ public class AddPublicacao extends AppCompatActivity implements AdapterView.OnIt
 
         ratingBar.getRating();
         Boolean bTemErro = false;
-        if(StringUtils.isBlank(pais.getText().toString())) {
-            pais.setError("País é um campo obrigatório");
-            bTemErro = true;
-        }
+
         if(StringUtils.isBlank(dtViagem.getText().toString())) {
             dtViagem.setError("Data da viagem é um campo obrigatório");
             bTemErro = true;
@@ -155,6 +157,7 @@ public class AddPublicacao extends AppCompatActivity implements AdapterView.OnIt
             cidade.setError("Cidade da viagem é um campo obrigatório");
             bTemErro = true;
         }
+
         if(!bTemErro) {
             Date dtConvert = new Date();
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -187,5 +190,7 @@ public class AddPublicacao extends AppCompatActivity implements AdapterView.OnIt
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+
     }
+
 }
