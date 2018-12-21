@@ -5,8 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RatingBar;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -20,6 +24,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -27,14 +32,19 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AddPublicacao extends AppCompatActivity {
+public class AddPublicacao extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     FirebaseDatabase firebaseDatabase;
 
     EditText dtViagem ;
     EditText cidade;
     EditText pais;
     RatingBar ratingBar;
+    Spinner spinner;
     String id;
+    List<Pais> paises;
+    String paisSelected;
+    Publicacao publicacao = new Publicacao();
+    List<String> paisesTraduzidos = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -48,6 +58,10 @@ public class AddPublicacao extends AppCompatActivity {
         pais = findViewById(R.id.editPais);
         ratingBar =findViewById(R.id.ratingBar);
 
+
+        spinner = (Spinner) findViewById(R.id.spinner);
+
+
         Bundle extras = getIntent().getExtras();
 
         if(extras != null){
@@ -60,7 +74,7 @@ public class AddPublicacao extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        Publicacao publicacao = dataSnapshot.getValue(Publicacao.class);
+                        publicacao = dataSnapshot.getValue(Publicacao.class);
                         pais.setText(publicacao.getPais());
                         cidade.setText(publicacao.getCidade());
                         dtViagem.setText(publicacao.getDtViagem().toString());
@@ -76,13 +90,35 @@ public class AddPublicacao extends AppCompatActivity {
             });
 
         }
+
         try {
+
             call = new RetrofitConfig().getPaisService().buscarPais();
             call.enqueue(new Callback<List<Pais>>() {
                 @Override
                 public void onResponse(Call<List<Pais>> call, Response<List<Pais>> response) {
 
-                   List<Pais> paises = response.body();
+                   paises =  response.body();
+
+
+
+
+                    for(Pais paisTraduzido : paises){
+
+                        paisesTraduzidos.add(paisTraduzido.getTranslations().getBr());
+
+                    }
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter(getApplicationContext(),
+                            android.R.layout.simple_spinner_item,
+                            paisesTraduzidos);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinner.setOnItemSelectedListener(AddPublicacao.this);
+                    adapter.getAutofillOptions("teste");
+
+                    spinner.setAdapter(adapter);
+
+
 
                 }
 
@@ -94,6 +130,12 @@ public class AddPublicacao extends AppCompatActivity {
         }catch (Exception e){
             Log.e("RetrofitConfig", e.getMessage());
         }
+
+
+
+
+
+
 
     }
 
@@ -120,7 +162,7 @@ public class AddPublicacao extends AppCompatActivity {
 
             DatabaseReference databaseRef = firebaseDatabase.getReference();
 
-            Publicacao publicacao = new Publicacao(pais.getText().toString(),
+            Publicacao publicacao = new Publicacao(paisSelected,
                     cidade.getText().toString(),
                     dtConvert,
                     new Date(), ratingBar.getRating());
@@ -133,5 +175,17 @@ public class AddPublicacao extends AppCompatActivity {
             }
             finish();
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        paisSelected = (String) adapterView.getItemAtPosition(i);
+
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 }

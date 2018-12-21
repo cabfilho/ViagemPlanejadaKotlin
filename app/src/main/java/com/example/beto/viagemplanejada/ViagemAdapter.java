@@ -101,11 +101,6 @@ public class ViagemAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public String recuperaId(int index){
-
-        String id = items.get(index).getKey();
-        return id;
-    }
     public class ViagemViewHolder extends RecyclerView.ViewHolder{
 
         public TextView paisTextView;

@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -55,62 +56,68 @@ public class MainActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         Context context = this;
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = null;
+        if ( cm != null ) {
+             ni = cm.getActiveNetworkInfo();
 
-//        if ( cm != null ) {
-//            NetworkInfo ni = cm.getActiveNetworkInfo();
-//
-//            return ni != null && ni.isConnected();
-//        }
+        }
+        if(ni != null && ni.isConnected()){
+            databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot != null && dataSnapshot.exists()){
 
-        databaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot != null && dataSnapshot.exists()){
+                    } else {
+                        Snackbar.make(findViewById(R.id.root),
+                                "Insira uma publicação",
+                                Snackbar.LENGTH_LONG).show();
+                    }
 
-                } else {
-                    Snackbar.make(findViewById(R.id.root),
-                            "Insira uma publicação",
-                            Snackbar.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.GONE);
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+            listener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    ViagemAdapter adapter = (ViagemAdapter) viagemRecyclerView.getAdapter();
+                    adapter.addItem(dataSnapshot);
                 }
 
-                progressBar.setVisibility(View.GONE);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    ViagemAdapter adapter = (ViagemAdapter) viagemRecyclerView.getAdapter();
+                    adapter.changeItem(dataSnapshot);
+                }
 
-            }
-        });
-        listener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                ViagemAdapter adapter = (ViagemAdapter) viagemRecyclerView.getAdapter();
-                adapter.addItem(dataSnapshot);
-            }
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                    ViagemAdapter adapter = (ViagemAdapter) viagemRecyclerView.getAdapter();
+                    adapter.removeItem(dataSnapshot);
+                }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                ViagemAdapter adapter = (ViagemAdapter) viagemRecyclerView.getAdapter();
-                adapter.changeItem(dataSnapshot);
-            }
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                ViagemAdapter adapter = (ViagemAdapter) viagemRecyclerView.getAdapter();
-                adapter.removeItem(dataSnapshot);
-            }
+                }
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
+                }
+            };
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            databaseRef.addChildEventListener(listener);
+        }else{
+            Snackbar.make(findViewById(R.id.root),
+                    "Conecte a Internet",
+                    Snackbar.LENGTH_LONG).show();
+            progressBar.setVisibility(View.GONE);
 
-            }
-        };
-
-        databaseRef.addChildEventListener(listener);
+        }
 
     }
     public void addPublicacao(View view){
