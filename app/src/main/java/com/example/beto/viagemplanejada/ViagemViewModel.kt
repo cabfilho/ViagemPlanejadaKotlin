@@ -24,32 +24,8 @@ class ViagemViewModel(application: Application): AndroidViewModel(application) {
     val isLoading = MutableLiveData<Boolean>()
 
     val repository = ViagemRepository(application.applicationContext)
-    val newsList = repository.allNews()
+    val publicacaoList = repository.allPublicacoes()
 
 
-//    fun getData(){
-        //newsList = repository.allNews()
-//        val call = RetrofitProvider.newsAPI.getAllNews()
-//        isLoading.value = true
-//        call.enqueue(object : Callback<NewsResponseObject> {
-//            override fun onFailure(call: Call<NewsResponseObject>, t: Throwable) {
-//                _errorMessage = "Deu ruim: ${t.message}"
-//                isLoading.value = false
-//            }
-//
-//            override fun onResponse(call: Call<NewsResponseObject>,
-//                                    response: Response<NewsResponseObject>
-//            ) {
-//                if (response.isSuccessful){
-//                    response.body()?.let {newsResponseObject->
-//                        newsList.value = newsResponseObject.news
-//                    }
-//                } else {
-//                    _errorMessage = "Deu ruim, fale com o admin"
-//                }
-//                isLoading.value = false
-//            }
-//
-//        })
-//    }
+
 }

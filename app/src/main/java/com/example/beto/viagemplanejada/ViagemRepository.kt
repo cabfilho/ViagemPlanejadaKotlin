@@ -1,57 +1,89 @@
 package com.example.beto.viagemplanejada
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import androidx.lifecycle.LiveData
 import com.example.beto.viagemplanejada.database.FireBaseData
 import com.example.beto.viagemplanejada.model.Publicacao
 import com.example.beto.viagemplanejada.database.PublicacaoDAO
 import com.example.beto.viagemplanejada.database.ViagemDatabase
-import com.example.beto.viagemplanejada.services.PaisService
-import com.example.beto.viagemplanejada.services.RetrofitConfig
-import io.github.mobileteacher.newsrevision.api.NewsAPI
-import io.github.mobileteacher.newsrevision.api.RetrofitProvider
-import io.github.mobileteacher.newsrevision.models.News
-import io.github.mobileteacher.newsrevision.models.NewsResponseObject
+
+
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class ViagemRepository(context: Context) {
 
-    val newsDAO: PublicacaoDAO = ViagemDatabase.get(context).publicacaoDao()
-
+    val publicacaoDAO: PublicacaoDAO = ViagemDatabase.get(context).publicacaoDao()
+    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     fun insertPublicacao(publicacao: Publicacao){
-        newsDAO.insert(publicacao)
-        FireBaseData.insertPublicacao(publicacao)
+        publicacaoDAO.insert(publicacao)
+
+        var ni: NetworkInfo? = null
+        if (cm != null) {
+            ni = cm.activeNetworkInfo
+
+        }
+
+        if (ni != null && ni.isConnected) {
+            FireBaseData.savePublicacao(publicacao)
+        }
     }
 
-    fun allNews():LiveData<List<News>>{
-        val newsList = newsDAO.getAllNews()
+
+    fun removePublicacao(publicacao: Publicacao){
+        publicacaoDAO.delete(publicacao)
+
+        var ni: NetworkInfo? = null
+        if (cm != null) {
+            ni = cm.activeNetworkInfo
+
+        }
+
+        if (ni != null && ni.isConnected) {
+            FireBaseData.removePublicacao(publicacao.id)
+        }
+    }
+
+    fun updatePublicacao(publicacao: Publicacao){
+        publicacaoDAO.update(publicacao)
+
+        var ni: NetworkInfo? = null
+        if (cm != null) {
+            ni = cm.activeNetworkInfo
+
+        }
+
+        if (ni != null && ni.isConnected) {
+            FireBaseData.savePublicacao(publicacao)
+        }
+    }
+
+    fun allPublicacoes():LiveData<List<Publicacao>>{
+        val allPublicacoes = publicacaoDAO.getAllPublicacoes()
         // verificar critério de validade do cache
-        val shouldCache = newsList.value?.isEmpty() ?: true
+        val shouldCache = allPublicacoes.value?.isEmpty() ?: true
         if (shouldCache){
             cacheData()
         }
-        return newsList
+        return allPublicacoes
     }
 
     fun cacheData(){
-        val call = newsApi.getAllNews()
-        call.enqueue(object : Callback<NewsResponseObject>{
-            override fun onFailure(call: Call<NewsResponseObject>, t: Throwable) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
+        var ni: NetworkInfo? = null
+        if (cm != null) {
+            ni = cm.activeNetworkInfo
 
-            override fun onResponse(call: Call<NewsResponseObject>, response: Response<NewsResponseObject>) {
-                if (response.isSuccessful){
-                    response.body()?.let {
-                        newsDAO.insertAll(it.news)
-                    }
-                }
-            }
+        }
 
-        })
+        if (ni != null && ni.isConnected) {
+            val publicacoes = FireBaseData.getAllPublicacao()
+            if(publicacoes.isNotEmpty())
+                publicacaoDAO.insertAll(publicacoes)
+        }
     }
 
 }

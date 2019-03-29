@@ -8,7 +8,7 @@ import com.example.beto.viagemplanejada.model.Publicacao
 interface PublicacaoDAO {
 
     @Query("SELECT * FROM Publicacao")
-    fun getAllNews(): LiveData<List<Publicacao>>
+    fun getAllPublicacoes(): LiveData<List<Publicacao>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(publicacao: Publicacao)
