@@ -38,6 +38,9 @@ class AddPublicacaoViewModel(application: Application): AndroidViewModel(applica
             newsInformative,
             newsDate)
 
+
+
+
         constructor(pais: String, cidade: String, dtViagem: Date, dtPublicacao: Date, rating: Float) {
             this.pais = pais
             this.cidade = cidade
