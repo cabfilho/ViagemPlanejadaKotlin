@@ -30,7 +30,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_main.*
 
-import java.util.ArrayList
+
 
 class MainActivity : AppCompatActivity() {
     private var progressBar: ProgressBar? = null
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
 
         progressBar = findViewById(R.id.progressBar)
 
-        val adapter = ViagemAdapter(ArrayList())
+        val adapter = ViagemAdapter(emptyList<Publicacao>() as MutableList<Publicacao>)
 
         viagemRecyclerView.adapter = adapter
 

@@ -6,13 +6,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.RatingBar
-import android.widget.Spinner
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.example.beto.viagemplanejada.model.Pais
 import com.example.beto.viagemplanejada.model.Publicacao
 import com.example.beto.viagemplanejada.services.RetrofitConfig
@@ -26,8 +24,7 @@ import com.google.firebase.database.ValueEventListener
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.ArrayList
-import java.util.Date
+
 
 import retrofit2.Call
 import retrofit2.Callback
@@ -46,10 +43,14 @@ class AddPublicacao(): AppCompatActivity(), AdapterView.OnItemSelectedListener {
     internal lateinit var paisSelected: String
     internal var publicacao: Publicacao? = Publicacao()
     internal var paisesTraduzidos: MutableList<String> = ArrayList()
+    private lateinit var addPublicacaoViewModel: AddPublicacaoViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        addPublicacaoViewModel = ViewModelProviders.of(this)
+                .get(AddPublicacaoViewModel::class.java)
+
         val extras = intent.extras
         setContentView(R.layout.activity_add_publicacao)
         firebaseDatabase = FirebaseDatabase.getInstance()
@@ -63,6 +64,9 @@ class AddPublicacao(): AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         spinner = findViewById<View>(R.id.spinner) as Spinner
 
+        addPublicacaoViewModel.errorMessage.observe(this, Observer {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        })
 
 
 
@@ -151,16 +155,16 @@ class AddPublicacao(): AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
 
         if ((!bTemErro)) {
-            var dtConvert = Date()
+            var dtConvert = ""
             val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-            dtConvert = dateFormat.parse(dtViagem!!.text.toString())
+            dtConvert = dateFormat.parse(dtViagem!!.text.toString()).toString()
 
             val databaseRef = firebaseDatabase.reference
 
             val publicacao = Publicacao(paisSelected,
                     cidade!!.text.toString(),
                     dtConvert,
-                    Date(), ratingBar.rating)
+                    "", ratingBar.rating)
 
             if (id.isBlank()) {
                 databaseRef.child("Publicacao").push().setValue(publicacao)

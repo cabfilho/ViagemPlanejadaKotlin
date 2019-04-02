@@ -19,7 +19,7 @@ class ViagemRepository(context: Context) {
     val publicacaoDAO: PublicacaoDAO = ViagemDatabase.get(context).publicacaoDao()
     val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-    fun insertPublicacao(publicacao: Publicacao){
+    fun insertPublicacao(publicacao: Publicacao,succesAction: ()->Unit, failureAction: ()->Unit){
         publicacaoDAO.insert(publicacao)
 
         var ni: NetworkInfo? = null
@@ -30,6 +30,9 @@ class ViagemRepository(context: Context) {
 
         if (ni != null && ni.isConnected) {
             FireBaseData.savePublicacao(publicacao)
+            succesAction()
+        }else{
+            failureAction()
         }
     }
 
