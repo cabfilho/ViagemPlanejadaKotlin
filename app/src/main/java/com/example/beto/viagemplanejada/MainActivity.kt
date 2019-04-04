@@ -1,14 +1,9 @@
 package com.example.beto.viagemplanejada
 
-import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 
 import android.os.Bundle
 
-import android.view.MotionEvent
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
@@ -17,17 +12,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.beto.viagemplanejada.model.Publicacao
-import com.google.android.material.snackbar.Snackbar
 
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -61,8 +47,12 @@ class MainActivity : AppCompatActivity() {
 
 
         progressBar = findViewById(R.id.progressBar)
+        var lista: MutableList<Publicacao>  = mutableListOf()
+        viagemViewModel.publicacaoList.value?.let {lista = it}
 
-        val adapter = ViagemAdapter(emptyList<Publicacao>() as MutableList<Publicacao>)
+
+
+        val adapter = ViagemAdapter(lista)
 
         viagemRecyclerView.adapter = adapter
 

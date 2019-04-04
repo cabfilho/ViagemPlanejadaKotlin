@@ -8,11 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
-import com.example.beto.viagemplanejada.database.FireBaseData
 import com.example.beto.viagemplanejada.model.Publicacao
-
-import com.google.firebase.database.DataSnapshot
 
 import java.text.SimpleDateFormat
 
@@ -38,14 +36,12 @@ class ViagemAdapter(internal var items: MutableList<Publicacao>) : RecyclerView.
 
         viagemViewHolder.paisTextView.setText(publicacao!!.pais)
 
-        val dtConvert = publicacao!!.dtViagem
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
 
-        viagemViewHolder.dtTextView.text = dateFormat.format(dtConvert)
+        viagemViewHolder.dtTextView.text  = publicacao!!.dtViagem
         viagemViewHolder.itemView.setOnClickListener {
             val id = items[position].id
             val intent = Intent(context, AddPublicacao::class.java)
-            intent.putExtra("id", id)
+            intent.putExtra("id", id.toString())
             context!!.startActivity(intent)
         }
 

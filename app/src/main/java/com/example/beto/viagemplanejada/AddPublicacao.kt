@@ -19,7 +19,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-
+import kotlinx.android.synthetic.main.activity_add_publicacao.*
 
 
 import java.text.ParseException
@@ -35,8 +35,8 @@ class AddPublicacao(): AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     private var dtViagem: EditText? = null
     private var cidade: EditText? = null
-
-    internal lateinit var ratingBar: RatingBar
+    private lateinit var repository: ViagemRepository
+    internal lateinit var ratingBarIncuir: RatingBar
     internal lateinit var spinner: Spinner
     internal lateinit var id: String
     internal var paises: List<Pais>? = null
@@ -44,6 +44,7 @@ class AddPublicacao(): AppCompatActivity(), AdapterView.OnItemSelectedListener {
     internal var publicacao: Publicacao? = Publicacao()
     internal var paisesTraduzidos: MutableList<String> = ArrayList()
     private lateinit var addPublicacaoViewModel: AddPublicacaoViewModel
+    private lateinit var viagemRepository:ViagemRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -53,48 +54,38 @@ class AddPublicacao(): AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         val extras = intent.extras
         setContentView(R.layout.activity_add_publicacao)
-        firebaseDatabase = FirebaseDatabase.getInstance()
+      //  firebaseDatabase = FirebaseDatabase.getInstance()
         val call: Call<List<Pais>>
         id = ""
         dtViagem = findViewById(R.id.editDtViagem)
         cidade = findViewById(R.id.editCidade)
         dtViagem!!.addTextChangedListener(MaskEditUtil.mask(dtViagem!!, MaskEditUtil.FORMAT_DATE))
-
-
-
+        ratingBarIncuir =  ratingBar
+        repository = ViagemRepository(context = applicationContext)
         spinner = findViewById<View>(R.id.spinner) as Spinner
 
         addPublicacaoViewModel.errorMessage.observe(this, Observer {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         })
 
-
+        viagemRepository = ViagemRepository(this)
 
         if (extras != null) {
             id = extras.get("id") as String
         }
 
         if (id.isNotBlank()) {
-            val databaseRef = firebaseDatabase.reference.child("Publicacao").child(id)
-            databaseRef.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        publicacao = dataSnapshot.getValue<Publicacao>(Publicacao::class.java!!)
 
-                        cidade!!.setText(publicacao!!.cidade)
-                        val dtConvert: String
-                        val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-                        dtConvert = dateFormat.format(publicacao!!.dtViagem)
-                        dtViagem!!.setText(dtConvert)
-                        ratingBar.rating = publicacao!!.rating
+            publicacao = viagemRepository.getPublicacao(id)
+            if(publicacao!= null) {
+                cidade!!.setText(publicacao!!.cidade)
 
-                    }
-                }
 
-                override fun onCancelled(databaseError: DatabaseError) {
 
-                }
-            })
+                dtViagem!!.setText(publicacao!!.dtViagem)
+                ratingBar.rating = publicacao!!.rating
+            }
+
 
         }
 
@@ -155,22 +146,30 @@ class AddPublicacao(): AppCompatActivity(), AdapterView.OnItemSelectedListener {
         }
 
         if ((!bTemErro)) {
-            var dtConvert = ""
-            val dateFormat = SimpleDateFormat("dd/MM/yyyy")
-            dtConvert = dateFormat.parse(dtViagem!!.text.toString()).toString()
 
-            val databaseRef = firebaseDatabase.reference
+            //val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+            //var dtConvert = dateFormat.parse(dtViagem.toString())
 
             val publicacao = Publicacao(paisSelected,
                     cidade!!.text.toString(),
-                    dtConvert,
+                    dtViagem!!.text.toString(),
                     "", ratingBar.rating)
 
-            if (id.isBlank()) {
-                databaseRef.child("Publicacao").push().setValue(publicacao)
 
-            } else {
-                databaseRef.child("Publicacao").child(id).setValue(publicacao)
+            if (id.isBlank()) {
+
+                repository.insertPublicacao(publicacao, {
+                   false
+                    true
+                }, {
+                    false
+                })
+
+
+            }else{
+                publicacao.id = id.toInt()
+                repository.updatePublicacao(publicacao)
+
             }
             finish()
         }

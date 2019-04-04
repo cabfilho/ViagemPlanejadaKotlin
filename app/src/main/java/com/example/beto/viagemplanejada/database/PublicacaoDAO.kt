@@ -8,13 +8,16 @@ import com.example.beto.viagemplanejada.model.Publicacao
 interface PublicacaoDAO {
 
     @Query("SELECT * FROM Publicacao")
-    fun getAllPublicacoes(): LiveData<List<Publicacao>>
+    fun getAllPublicacoes(): LiveData<MutableList<Publicacao>>
+
+    @Query("select * from Publicacao where id =:id")
+    fun getPublicacao(id:Int): Publicacao
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(publicacao: Publicacao)
+    fun insert(publicacao: Publicacao): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(newsList: List<Publicacao>)
+    fun insertAll(publicacaoList: List<Publicacao>)
 
     @Update()
     fun update(publicacao: Publicacao)

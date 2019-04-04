@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.beto.viagemplanejada.model.Publicacao
 
 
-@Database(entities = [Publicacao::class], version = 1)
+@Database(entities = [Publicacao::class], version = 5)
 abstract class ViagemDatabase: RoomDatabase() {
 
     abstract fun publicacaoDao(): PublicacaoDAO
@@ -20,7 +20,7 @@ abstract class ViagemDatabase: RoomDatabase() {
                     context,
                     ViagemDatabase::class.java,
                     "PublicacaoDatabase"
-                ).allowMainThreadQueries()
+                ).allowMainThreadQueries().fallbackToDestructiveMigration()
                     .build()
 
                 INSTANCE = instance
